@@ -1,0 +1,12 @@
+data/
+__pycache__/
+*.py[cod]
+*.log
+.venv/
+.env
+.env.*
+!.env.example
+verification/
+output/
+node_modules/
+.DS_Store

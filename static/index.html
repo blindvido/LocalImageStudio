@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>绘境 · 本地绘图工作室</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="#"><span class="brand-icon">绘</span><span>绘境<small>LOCAL IMAGE STUDIO</small></span></a>
+  <div class="nav-caption">你的创作空间</div>
+  <nav aria-label="主导航">
+    <button class="nav-item active" data-page="create"><span>✦</span>ComfyUI 生图</button>
+    <button class="nav-item" data-page="novelai"><span>✧</span>NovelAI 生图</button>
+    <button class="nav-item" data-page="edit"><span>◈</span>改图模式</button>
+    <button class="nav-item" data-page="panels"><span>▦</span>漫画编辑站</button>
+    <button class="nav-item" data-page="characters"><span>♧</span>人物库</button>
+    <button class="nav-item" data-page="workflows"><span>◇</span>工作流</button>
+    <button class="nav-item" data-page="history"><span>◷</span>创作历史</button>
+    <button class="nav-item" data-page="settings"><span>⚙</span>连接与设置</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="local-badge"><i></i> 本地工作室</div><p>想象交给你，细节交给 AI。</p><small>基于智绘姬工作流约定 · v1.0</small></div>
+</aside>
+<main>
+  <header class="topbar"><span id="page-label">开始创作</span><button id="connection" class="connection"><i></i><span>检查 ComfyUI…</span></button></header>
+  <section id="page-create" class="page active">
+    <div class="page-heading"><div class="eyebrow">FROM WORDS TO WORLDS</div><h1>让想象，成为画面<span>。</span></h1><p>描述你的灵感，选择工作流，开始一次创作。</p></div>
+    <div class="studio-grid">
+      <div class="creation-column">
+        <div class="card compose-card">
+          <div class="card-heading"><h2><span class="step">01</span>描述画面</h2><span class="pill">自然语言</span></div>
+          <label for="image-provider">生图来源</label><select id="image-provider"><option value="comfyui">本地 ComfyUI</option><option value="novelai">NovelAI API</option></select><p id="provider-hint" class="hint">使用本地工作流生成图片。</p><label for="workflow-select">使用工作流</label><select id="workflow-select"></select>
+          <div class="field-heading"><label for="description">你想画什么？</label><button id="example" class="text-button">试试示例 ↗</button></div>
+          <textarea id="description" rows="5" placeholder="例如：雨后的街角，一位穿着白色连衣裙的女孩撑着透明雨伞，霓虹灯映在湿润的路面上，电影感光线。"></textarea>
+          <p id="character-matches" class="hint" aria-live="polite">输入已保存的人物名字，自动带入人设。</p>
+          <button id="character-from-create" class="text-button">将人物设定整理到人物库 →</button>
+          <label for="template-select">提示词风格</label><select id="template-select"></select>
+          <button id="generate-prompt" class="button secondary wide">✧ 生成提示词</button>
+          <p class="hint">调用你配置的 API，将描述整理为绘图 Prompt。</p>
+        </div>
+        <div class="card">
+          <div class="card-heading"><h2><span class="step">02</span>打磨提示词</h2><span class="muted tiny">可直接编辑</span></div>
+          <label for="positive-prompt">正面提示词</label><textarea id="positive-prompt" rows="4" placeholder="AI 生成的提示词会出现在这里，也可以直接粘贴你的 Prompt。"></textarea>
+          <label for="negative-prompt">负面提示词</label><textarea id="negative-prompt" rows="2" placeholder="需要避免的画面问题；可以留空。"></textarea>
+          <details class="parameters"><summary>生成参数 <span>按工作流可用字段显示</span></summary><div id="parameter-fields" class="field-grid"></div><label class="check-label"><input type="checkbox" id="random-seed" checked>每次使用随机种子</label></details>
+          <div class="action-row"><button id="render" class="button secondary">用当前提示词生图</button><button id="one-click" class="button primary">✦ 一键生成</button></div>
+          <p class="hint">一键生成：描述 → API 提示词 → 所选来源生成图片</p>
+        </div>
+      </div>
+      <div class="result-column">
+        <div class="card result-card"><div class="card-heading"><h2>创作预览</h2><span id="result-tag" class="pill">等待灵感</span></div>
+          <div id="job-status" role="status" aria-live="polite"></div>
+          <div id="result-images"><div class="empty-art"><div class="orbit"><span>✦</span></div><h3>下一幅作品，从这里开始</h3><p>输入画面描述，或直接使用提示词。<br>生成的图片会在这里呈现。</p><div class="empty-tags"><span>自然语言描述</span><span>自选工作流</span><span>本地生图</span></div></div></div>
+          <div id="result-meta" class="result-meta"></div>
+        </div>
+        <div class="tip-card"><span>↗</span><div><strong>你的工作流，你的风格</strong><p>导入 ComfyUI API 工作流，选择适合模型的提示词风格。所有生成参数可在历史中找回。</p><button class="text-button" data-goto="workflows">管理工作流 →</button></div></div>
+      </div>
+    </div>
+  </section>
+  <section id="page-novelai" class="page"></section>
+  <section id="page-panels" class="page">
+    <div class="page-heading"><div class="eyebrow">ONE PANEL AT A TIME</div><h1>漫画编辑站<span>。</span></h1><p>按话、页和分镜审核图片；通过的具体版本进入排版选用清单。</p></div>
+    <div id="comic-review-board"></div>
+  </section>
+  <section id="page-edit" class="page">
+    <div class="page-heading"><div class="eyebrow">REFINE THE DETAILS</div><h1>改图模式<span>。</span></h1><p>定位要改的部位，确认选区，再局部重绘。使用本机 WAI Illustrious SDXL。</p></div>
+    <div class="studio-grid">
+      <div class="creation-column">
+        <div class="card"><h2><span class="step">01</span>原图与修改部位</h2>
+          <label class="file-drop" for="edit-file">＋ 上传原图<input id="edit-file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <p id="edit-source-info" class="hint">PNG、JPEG、WebP · 小于 20 MB · 边长不超过 4096 像素</p>
+          <label for="edit-region">要修改的部位</label><input id="edit-region" placeholder="例如：earrings（耳饰）、face（脸）、hair（头发）">
+          <p class="hint">部位名称建议用简短英文。选区不准时，在右侧原图上点选包含或排除的位置。</p>
+          <div class="field-grid"><div><label for="edit-point-mode">点选方式</label><select id="edit-point-mode"><option value="positive">包含此处 · 绿色</option><option value="negative">排除此处 · 红色</option></select></div><div><label for="edit-threshold">识别阈值</label><input id="edit-threshold" type="number" min="0.05" max="0.99" step="0.05" value="0.5"></div></div>
+          <div class="action-row"><button id="edit-clear-points" class="button secondary">清空点选</button><button id="edit-select" class="button primary">定位并预览选区</button></div>
+          <p class="hint">绿色覆盖区域将被修改。调整部位、点选或阈值后，需要重新定位。</p>
+        </div>
+        <div class="card"><h2><span class="step">02</span>修改内容</h2>
+          <label for="edit-description">希望如何修改？</label><textarea id="edit-description" rows="3" placeholder="例如：把耳饰改成蓝色鲸鱼形状，保持原图的漫画画风。"></textarea>
+          <label for="edit-preserve">必须保留的特征</label><textarea id="edit-preserve" rows="2" placeholder="例如：蓝色头发、鲸鱼耳朵、原来的表情和服装。"></textarea>
+          <p id="edit-character-matches" class="hint" aria-live="polite">提到人物名字，生成提示词时自动带入人设。</p>
+          <button id="edit-prompt" class="button secondary wide">结合原图生成提示词</button><p class="hint">调用设置中的 Prompt API，需要所选模型支持看图；也可直接填写下面的提示词。</p>
+          <label for="edit-positive">局部重绘提示词</label><textarea id="edit-positive" rows="3" placeholder="填写修改后的目标内容，例如 blue whale-shaped earrings"></textarea>
+          <label for="edit-negative">负面提示词</label><textarea id="edit-negative" rows="2">blurry, low quality, bad anatomy, text, watermark</textarea>
+          <details class="parameters"><summary>重绘参数</summary><div class="field-grid">
+            <div><label for="edit-denoise">修改强度</label><input id="edit-denoise" type="number" min="0.05" max="1" step="0.05" value="0.5"></div>
+            <div><label for="edit-steps">步数</label><input id="edit-steps" type="number" min="1" max="60" value="20"></div>
+            <div><label for="edit-cfg">提示词强度</label><input id="edit-cfg" type="number" min="1" max="15" step="0.5" value="6"></div>
+            <div><label for="edit-grow">选区扩展（像素）</label><input id="edit-grow" type="number" min="0" max="64" value="4"></div>
+            <div><label for="edit-blur">边缘柔化（像素）</label><input id="edit-blur" type="number" min="0" max="32" value="3"></div>
+          </div><p class="hint">小细节可降低修改强度。扩展与柔化会使选区边缘附近也参与修改。</p></details>
+          <label class="check-label"><input id="edit-confirm" type="checkbox" disabled>我已查看并确认当前选区</label>
+          <button id="edit-render" class="button primary wide" disabled>局部重绘</button>
+        </div>
+      </div>
+      <div class="result-column">
+        <div class="card"><div class="card-heading"><h2>原图与选区</h2><span id="edit-mask-info" class="pill">等待上传</span></div>
+          <div id="edit-empty" class="empty-art"><div class="orbit"><span>◈</span></div><h3>先上传一张想修改的图片</h3><p>在原图上点选，帮助识别修改部位。</p></div>
+          <canvas id="edit-canvas" hidden aria-label="原图与修改选区，点击添加包含或排除点"></canvas>
+          <label class="check-label"><input id="edit-show-mask" type="checkbox" checked>显示绿色选区覆盖</label>
+          <div id="edit-status" role="status" aria-live="polite"></div><button id="edit-resume" class="button secondary" hidden>继续查询已有任务</button>
+        </div>
+        <div class="card"><h2>修改结果</h2><div id="edit-results"><p class="hint">重绘完成后，结果将在这里显示；上方保留原图供对比。</p></div></div>
+      </div>
+    </div>
+  </section>
+  <section id="page-characters" class="page">
+    <div class="page-heading"><div class="eyebrow">FAMILIAR FACES, NEW STORIES</div><h1>人物库<span>。</span></h1><p>保存一次人物设定，下次提到名字，就能带入熟悉的模样。</p></div>
+    <div class="workspace-grid">
+      <div class="card"><div class="card-heading"><h2>已保存人物</h2><button id="character-new" class="text-button">＋ 新建</button></div>
+        <label for="character-search">搜索人物</label><input id="character-search" type="search" placeholder="名称、别名或设定关键词">
+        <p id="character-count" class="hint" role="status" aria-live="polite"></p>
+        <div id="character-list"></div>
+        <nav class="character-pagination" aria-label="人物库分页"><button id="character-prev" class="text-button" type="button">上一页</button><span id="character-page" class="hint"></span><button id="character-next" class="text-button" type="button">下一页</button></nav>
+        <p class="hint">每页10位人物。搜索不影响创作时的人物匹配。</p></div>
+      <div class="card" id="character-editor">
+        <h2 id="character-editor-title">创建人物</h2>
+        <div class="field-grid"><div><label for="character-name">人物名字</label><input id="character-name" maxlength="64" placeholder="例如：DS"></div><div><label for="character-aliases">别名（逗号分隔）</label><input id="character-aliases" placeholder="例如：DeepSeek、深海"></div></div>
+        <label for="character-description">用自然语言描述固定外形</label><textarea id="character-description" rows="3" placeholder="例如：蓝色头发，鲸鱼发夹，像鱼鳍的耳朵。临时表情和动作留在创作描述中。"></textarea>
+        <button id="character-draft" class="button secondary wide">用 API 整理固定外形</button><p class="hint">结果填入下方，检查后点击保存。也可以直接手写 Prompt。</p>
+        <label for="character-appearance">固定外形 Prompt（必填）</label><textarea id="character-appearance" rows="4" placeholder="blue hair, whale-shaped hair clip, fish-fin-shaped ears"></textarea>
+        <label for="character-clothing">默认服装 Prompt</label><textarea id="character-clothing" rows="2" placeholder="maid outfit（本次明确要求换装时，以本次要求为准）"></textarea>
+        <label for="character-negative">人物负面 Prompt（可选）</label><textarea id="character-negative" rows="2" placeholder="需要避免的外形特征"></textarea>
+        <label for="character-notes">备注（可选）</label><textarea id="character-notes" rows="2" placeholder="辅助理解人物的设定，不作为场景描述"></textarea>
+        <label class="check-label"><input type="checkbox" id="character-enabled" checked>启用名字匹配</label>
+        <div class="action-row"><button id="character-save" class="button primary">确认并保存人物</button><button id="character-export" class="button secondary">导出人物</button><button id="character-delete" class="button danger" disabled>删除人物</button></div>
+        <p id="character-message" class="hint" role="status"></p>
+        <div class="note">生成提示词、一键生成和改图提示词会匹配人物名字。直接使用成品 Prompt 生图时，以编辑框为准。默认服装可被本次要求覆盖，临时换装不会改写人物库。</div>
+      </div>
+    </div>
+  </section>
+  <section id="page-workflows" class="page">
+    <div class="page-heading"><div class="eyebrow">YOUR CREATIVE ENGINE</div><h1>工作流<span>。</span></h1><p>将你的 ComfyUI 工作流带入工作室。</p></div>
+    <div class="workspace-grid">
+      <div><div class="card"><h2>工作流库</h2><div id="workflow-list"></div></div>
+        <div class="card import-card"><h2>导入工作流</h2><p class="hint">支持 ComfyUI 导出的 API 格式 JSON。</p><label for="workflow-file" class="file-drop">＋ 选择 JSON 文件<input id="workflow-file" type="file" accept=".json,application/json"></label><label for="local-source">从本机 ComfyUI 导入</label><select id="local-source"></select><button id="import-source" class="button secondary wide">导入所选文件</button></div>
+      </div>
+      <div class="card" id="workflow-editor">
+        <h2>工作流配置</h2><div class="field-grid"><div><label for="workflow-name">名称</label><input id="workflow-name"></div><div><label for="workflow-template">默认提示词风格</label><select id="workflow-template"></select></div></div>
+        <label for="fixed-positive">固定正面提示词</label><textarea id="fixed-positive" rows="2" placeholder="使用 API 生成时自动加入，例如画风、质量标签。"></textarea>
+        <label for="fixed-negative">固定负面提示词</label><textarea id="fixed-negative" rows="2" placeholder="使用 API 生成时自动加入。"></textarea>
+        <div class="note">固定词会加入 API 生成结果；“用当前提示词生图”直接使用编辑框中的最终文本。</div>
+        <h3>变量与默认值</h3><p class="hint">兼容智绘姬的 %prompt% 等变量。工作流缺少的参数会使用图内原值。</p><div id="workflow-values" class="field-grid"></div>
+        <label class="check-label"><input id="workflow-random" type="checkbox">默认使用随机种子</label>
+        <details class="advanced"><summary>没有占位符？配置节点字段映射</summary><p class="hint">选择参数要写入的节点字段。映射会覆盖该字段本次的值。</p><div id="mapping-fields" class="field-grid"></div><button id="suggest-mappings" class="text-button">查看常见字段建议</button><p id="mapping-suggestions" class="hint"></p></details>
+        <details class="advanced"><summary>查看或编辑 API JSON</summary><textarea id="workflow-json" class="code" rows="12" spellcheck="false"></textarea></details>
+        <div class="action-row"><button id="save-workflow" class="button primary">保存工作流配置</button><button id="export-workflow" class="button secondary">导出 JSON</button><button id="delete-workflow" class="button danger">删除副本</button></div>
+      </div>
+    </div>
+  </section>
+  <section id="page-history" class="page">
+    <div class="page-heading"><div class="eyebrow">A TRACE OF YOUR IMAGINATION</div><h1>创作历史<span>。</span></h1><p>保留每次灵感、提示词和实际种子，随时继续创作。</p></div>
+    <div class="card history-filters">
+      <div><label for="history-work-tag">作品标签</label><select id="history-work-tag"><option value="">全部作品</option><option value="__untagged__">未分类</option></select></div>
+      <div><label for="history-start">开始日期（北京时间）</label><input id="history-start" type="date"></div>
+      <div><label for="history-end">结束日期（含当天）</label><input id="history-end" type="date"></div>
+      <button id="history-clear" class="button secondary" type="button">清除筛选</button>
+    </div>
+    <p id="history-summary" class="hint" role="status" aria-live="polite"></p>
+    <div id="history-list" class="history-grid"></div>
+    <nav class="history-pagination" aria-label="创作历史分页">
+      <button id="history-prev" class="button secondary" type="button">上一页</button>
+      <span id="history-page" aria-live="polite"></span>
+      <button id="history-next" class="button secondary" type="button">下一页</button>
+    </nav>
+  </section>
+  <section id="page-settings" class="page">
+    <div class="page-heading"><div class="eyebrow">MAKE IT YOURS</div><h1>连接与设置<span>。</span></h1><p>连接提示词 API 与你的本地 ComfyUI。</p></div>
+    <div class="settings-grid"><div class="card"><h2>Prompt API</h2><p class="hint">支持 OpenAI 兼容的 Chat Completions 接口。</p><label for="api-url">API 地址</label><input id="api-url" type="url" placeholder="https://你的服务地址/v1"><label for="api-key">API Key</label><input id="api-key" type="password" autocomplete="new-password" placeholder="填写 API 密钥"><p id="key-state" class="hint"></p><div class="action-row"><button id="fetch-models" class="button secondary">获取模型列表</button></div><label for="api-model-select">连接可用模型</label><select id="api-model-select"><option value="">先获取模型列表，再选择模型</option></select><p id="model-list-state" class="hint">使用已保存的密钥，无需再次复制。列表不代表模型支持图片理解。</p><label for="api-model">模型名称</label><input id="api-model" placeholder="填写服务商提供的模型 ID"><label for="api-timeout">请求超时（秒）</label><input id="api-timeout" type="number" min="5" max="600" value="120"><div class="action-row"><button id="save-config" class="button primary">保存连接配置</button><button id="test-api" class="button secondary">测试 API</button><button id="clear-key" class="button danger">清除密钥</button></div><div id="api-connection-state" class="note" aria-live="polite">尚未测试连接。</div><p class="hint">测试 API 会调用所选模型，可能消耗额度。密钥仅保存在本机 data/config.json。</p></div>
+      <div class="card"><h2>ComfyUI</h2><label for="comfy-url">服务地址</label><input id="comfy-url" type="url" placeholder="http://127.0.0.1:8188"><div class="action-row"><button id="test-comfy" class="button secondary">保存并测试连接</button><button id="start-comfy" class="button primary">启动本地 ComfyUI</button></div><div id="comfy-detail" class="note">检查连接中…</div><p class="hint">复用已有模型与自定义节点。启动日志保存在 data/logs/comfyui.log。</p></div>
+      <div class="card"><h2>NovelAI 生图</h2><p class="hint">独立于提示词 API，使用 Persistent API Token 直接生成图片。支持官方接口和兼容 NovelAI 协议的中转。</p><label for="nai-fixed-positive">全局正面提示词</label><textarea id="nai-fixed-positive" rows="4" placeholder="每次 NovelAI 生图使用的风格、画质等固定提示词"></textarea><label for="nai-fixed-negative">全局负面提示词</label><textarea id="nai-fixed-negative" rows="3" placeholder="每次 NovelAI 生图需要避免的内容"></textarea><p class="hint">保存后，自动加到普通生图和漫画逐格的提示词开头；角色提示词保持独立。留空可取消。</p><label for="nai-url">NovelAI 接口地址</label><input id="nai-url" type="url" placeholder="https://image.novelai.net"><label for="nai-key">NovelAI Token</label><input id="nai-key" type="password" autocomplete="new-password"><p id="nai-key-state" class="hint"></p><label for="nai-model">NovelAI 默认模型</label><select id="nai-model"><option>nai-diffusion-5-full</option><option>nai-diffusion-5-curated</option><option>nai-diffusion-4-5-full</option><option>nai-diffusion-4-5-curated</option><option>nai-diffusion-4-full</option><option>nai-diffusion-4-curated-preview</option><option>nai-diffusion-3</option></select><div class="action-row"><button id="save-nai" class="button primary">保存 NovelAI 配置</button><button id="test-nai" class="button secondary">保存并测试连接</button><button id="clear-nai" class="button danger">清除 Token</button></div><p id="nai-result" class="note" aria-live="polite">连接测试仅查询标签，不生成图片。出图按账号或中转服务规则消耗额度。</p><p class="hint">Token 仅存本机 data/config.json，不回传到浏览器；不要分享该文件。中转服务需要提供 /ai/generate-image 接口并返回 ZIP 图片。</p></div><div class="card template-card"><h2>提示词模板</h2><p class="hint">告诉 API 如何把描述转换成适合生图模型的提示词。</p><div class="field-grid"><div><label for="template-editor-select">选择模板</label><select id="template-editor-select"></select></div><div><label for="template-name">模板名称</label><input id="template-name"></div></div><label for="template-text">系统提示词</label><textarea id="template-text" rows="7"></textarea><p class="hint">要求模型返回 JSON，包含 positive_prompt、negative_prompt 两个字符串字段。</p><div class="action-row"><button id="save-template" class="button primary">保存模板</button><button id="add-template" class="button secondary">新增模板</button><button id="delete-template" class="button danger">删除模板</button></div></div>
+    </div>
+  </section>
+  <footer>绘境 · 灵感在这里落地 <span>图片由所选生图引擎生成</span></footer>
+</main>
+<div id="toast" class="toast" role="alert"></div>
+<dialog id="lightbox"><button id="close-lightbox" aria-label="关闭预览">×</button><img id="lightbox-image" alt="生成图片原图"></dialog>
+<script src="/static/edit.js"></script>
+<script src="/static/characters.js"></script>
+<script src="/static/prompt-presets.js"></script>
+<script src="/static/character-prompts.js"></script>
+<script src="/static/prompt-sections.js"></script>
+<script src="/static/nai-chat.js"></script>
+<script src="/static/comic-script-editor.js"></script>
+<script src="/static/comic-review.js"></script>
+<script src="/static/app.js"></script>
+</body></html>
