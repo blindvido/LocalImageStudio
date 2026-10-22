@@ -71,7 +71,18 @@ flowchart LR
   F --> G[外部排版 / 气泡 / 台词]
 ```
 
-原图与新版分别保存。审批以人工选择为准，不自动把新图视为通过。分镜包面向 `comic-storyboard-image-pipeline` 等 Agent 工作流；后续拼版与台词排版由外部工具完成，绘境不内置 Pedit。
+原图与新版分别保存。审批以人工选择为准，不自动把新图视为通过。分镜包可配合 [ComicStoryboardImagePipeline · 漫画分镜出图与排版 Skill](https://github.com/blindvido/ComicStoryboardImagePipeline) 使用；后续拼版与台词排版由外部工具完成，绘境不内置 Pedit。
+
+### 配合漫画分镜 Skill
+
+[ComicStoryboardImagePipeline](https://github.com/blindvido/ComicStoryboardImagePipeline) 是可选的 Agent 协作层：读取已确认台本与 `memory.md`，由 Agent 编写模块化提示词，通过绘境顺序生图，记录实际 Prompt、Seed 和图片版本，再依据人工通过的图片使用 Pedit 排版。
+
+1. 在绘境漫画编辑站编辑台本、页和格，导出 **Skill 分镜包**。
+2. 按 Skill 仓库说明安装，让 Agent 读取导出包及项目记忆，明确本次处理范围。
+3. Agent 先归档提示词，再通过绘境预览实际请求并提交；使用该流程时 `use_api:false`，避免二次转换提示词。
+4. 用户在绘境逐格选定通过图片；Agent 读取 `/api/comic-review/selection` 后进行后续拼版，不擅自选择最新版。
+
+绘境负责生图、历史和审批；Skill 负责执行约定与版本归档；用户负责导演判断。绘境审批不会自动同步项目记忆或 Skill 的反馈记录。Skill、Pedit 及所引用的外部提示词技能需分别安装，详见 [联动说明](https://github.com/blindvido/ComicStoryboardImagePipeline#在绘境中配合使用)。
 
 ## 架构概览
 
@@ -98,6 +109,10 @@ flowchart TB
 - 人物分段和预设有助于控制内容，不保证角色一致性或动作准确。图片参考功能是否参与请求应以实际接口和请求预览为准，不能将保存参考图视为已启用风格／角色参考。
 - 局部改图依赖 ComfyUI 的 SAM3.1 等节点和对应模型；仓库不会自动下载模型或安装节点。
 - 项目仍在迭代，当前没有声明开源许可证；公开源码不等于已授予任意再分发许可。
+
+## 灵感与致谢
+
+绘境的创作流程与工作流占位符约定受到 **智绘姬插件** 的启发。感谢智绘姬提供的设计思路：将自然语言描述、提示词整理和绘图工作流串联起来。绘境的核心服务与界面为独立实现，不依赖安装智绘姬或酒馆即可运行。
 
 ## 开发与验证
 

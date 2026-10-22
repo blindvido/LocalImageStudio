@@ -14,7 +14,9 @@ NovelAI 生图和漫画编辑的生成栏提供 AI 对话。打开 API／系统�
 
 按作品、话、台本版本和页定位分镜。编辑台本可以增加下一页、移动或删除格、修改对白和镜头说明。保存后再生成图片；历史已生成版本仍保留。
 
-每格可上传已有图或从待归档列表绑定。候选可以比较、通过或修改参数生成新版。上传图没有原始生成参数时，不会凭空补齐 Prompt 或 Seed。审批后导出 Skill 分镜包及选图记录，交给外部排版工具。
+每格可上传已有图或从待归档列表绑定。候选可以比较、通过或修改参数生成新版。上传图没有原始生成参数时，不会凭空补齐 Prompt 或 Seed。审批后导出 Skill 分镜包及选图记录，配合 [ComicStoryboardImagePipeline](https://github.com/blindvido/ComicStoryboardImagePipeline) 交给 Agent 执行后续流程。
+
+该 Skill 根据台本与记忆编写 Prompt，通过绘境预览、顺序提交与归档；排版前读取 `/api/comic-review/selection` 中对应话和版本的人工选图。Pedit 模式可以仅对已有图添加中文对白、气泡及分镜布局，交付可编辑工程，不要求重新出图。绘境内的审批不会自动改写 `memory.md`，应由 Agent 根据真实确认记录更新。
 
 ## 历史与备份
 
